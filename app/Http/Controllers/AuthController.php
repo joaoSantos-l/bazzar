@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Usuario;
+use Hash;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -33,7 +36,24 @@ class AuthController extends Controller
             ]
         );
 
+        $user = trim($request->input('login_username'));
+        $senha = trim($request->input('login_password'));
+
+        $usuario = Usuario::where('email', $user)->first();
+
+        if ($usuario == null || !Hash::check($senha, $usuario->senha)) {
+            return redirect()->back()->with('login-error', 'Usuário não encontrado')->withInput();
+        }
+
+        session([
+            'user' => [
+                'id' => $usuario->id,
+                'username' => $usuario->email
+            ]
+        ]);
+
         return redirect()->route('index');
+
     }
 
     // Cadastro
@@ -67,7 +87,28 @@ class AuthController extends Controller
                 'cadastro_password.confirmed' => 'As senhas não coincidem.',
             ]
         );
+        $usuarioStr = trim($request->input('cadastro_name'));
+        $email = trim($request->input('cadastro_email'));
+        $senha = trim($request->input('cadastro_password'));
+
+        $senha = Hash::make($senha);
+
+        $usuario = new Usuario();
+        $usuario->user = $usuarioStr;
+        $usuario->email = $email;
+        $usuario->senha = $senha;
+
+        $usuario->save();
 
         return redirect()->route('index');
     }
+
+    public function logout()
+    {
+        session()->forget('user');
+        return redirect()->route('login');
+    }
 }
+
+
+

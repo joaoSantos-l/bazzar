@@ -54,7 +54,16 @@
             <h3 class="text-center text-2xl font-semibold mb-6">Acesse sua conta</h3>
 
             <form action="{{ route('auth.login') }}" method="POST" class="space-y-4">
+
                 @csrf
+                <div class="text-center mt-6">
+                    @if (session('login-error'))
+                        <div
+                            class="justify-center inline-flex bg-[#FF3D3B] text-white font-semibold text 2xl w-1/2 rounded-lg p-4">
+                            {{ session('login-error') }}
+                        </div>
+                    @endif
+                </div>
 
                 <div>
                     <label for="login_username" class="block text-sm mb-1">E-mail</label>

@@ -79,8 +79,7 @@
                 <div>
                     <label for="cadastro_password" class="block text-sm mb-1">Senha</label>
                     <div x-data="{ show: false }" class="relative">
-                        <label for="login_password" class="block text-sm mb-1">Senha</label>
-                        <input :type="show ? 'text' : 'password'" name="login_password"
+                        <input :type="show ? 'text' : 'password'" name="cadastro_password"
                             class="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-[#FF5A4B]"
                             placeholder="••••••••">
                         <button type="button" @click="show = !show"
