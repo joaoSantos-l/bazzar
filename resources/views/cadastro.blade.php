@@ -48,7 +48,7 @@
         <!-- Lado direito -->
         <div class="flex flex-col justify-center w-full md:w-1/2 bg-white text-black p-10">
             <div class="text-center">
-                <img src="{{ asset('build/assets/logo.png') }}" alt="Logo" class="h-24 mx-auto">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-24 mx-auto">
             </div>
 
             <h3 class="text-center text-2xl font-semibold mb-6">Crie sua conta</h3>

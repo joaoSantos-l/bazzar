@@ -6,7 +6,7 @@
     <nav class="bg-white shadow-md py-4 px-6 flex justify-between items-center relative">
         <div class="flex items-center gap-2">
             <a href="{{ route('index') }}">
-                <img src="{{ asset('build/assets/logo.png') }}" alt="Logo" class="h-16">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-16">
             </a>
         </div>
 
