@@ -11,5 +11,10 @@ class Usuario extends Model
     public static function searchByUser($user){
         return self::where('user',$user)->get()->first();
     }
+
+    public static function deleteUser($id){
+        Usuario::destroy($id);
+        
+    }
     
 }

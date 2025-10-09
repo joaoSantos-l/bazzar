@@ -66,11 +66,11 @@
                 </div>
 
                 <div>
-                    <label for="login_username" class="block text-sm mb-1">E-mail</label>
-                    <input type="email" name="login_username" value="{{ old('login_username') }}"
+                    <label for="login_email" class="block text-sm mb-1">E-mail</label>
+                    <input type="email" name="login_email" value="{{ old('login_email') }}"
                         class="w-full px-3 py-2 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-[#FF5A4B]"
                         placeholder="exemplo@email.com">
-                    @error('login_username')
+                    @error('login_email')
                         <div class="text-red-400 text-xs mt-1">{{ $message }}</div>
                     @enderror
                 </div>
