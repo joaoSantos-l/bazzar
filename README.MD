@@ -20,7 +20,7 @@ O objetivo do projeto é criar uma plataforma funcional de vendas online, inclui
 
 #### Produtos
 - Cadastro: imagem, nome, preço, categoria e estoque.
-- Edição/Exclusão: apenas para administradores.
+- Edição/Exclusão: apenas para administradores e vendedores.
 - Busca e filtros baseados em nomes e categorias.
 
 #### Usuários
@@ -45,7 +45,7 @@ git clone https://github.com/seu-usuario/bazzar.git
 cd bazzar
 
 composer install
-npm install
+npm run build
 npm run dev
 
 DB_CONNECTION=mysql
