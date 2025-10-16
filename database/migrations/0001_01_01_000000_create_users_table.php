@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('user', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('user', 25);
-            $table->string('email', 30);
+            $table->string('email', 30)->unique();
             $table->string('senha', 255);
             $table->timestamps();
         });

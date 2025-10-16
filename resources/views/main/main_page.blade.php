@@ -16,7 +16,7 @@
                         class="flex items-center gap-2 font-semibold md:p-3 rounded-lg md:text-2xl text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-200 transition">
                         <i class="bi bi-box-arrow-in-right"></i> Login
                     </a>
-                    <a href="{{ route('cadastro') }}"
+                    <a href="{{ route('register') }}"
                         class="flex items-center gap-2 font-semibold md:p-3 rounded-lg md:text-2xl text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-200 transition">
                         <i class="bi bi-person-plus-fill"></i> Cadastro
                     </a>
@@ -34,7 +34,7 @@
                         class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-100 transition">
                         <i class="bi bi-box-arrow-in-right"></i> Login
                     </a>
-                    <a href="{{ route('cadastro') }}"
+                    <a href="{{ route('register') }}"
                         class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-100 transition">
                         <i class="bi bi-person-plus-fill"></i> Cadastro
                     </a>
@@ -49,7 +49,7 @@
 
                 <div id="profileMenu"
                     class="p-4 absolute top-18 right-6 mt-2 bg-white rounded-lg inset-shadow-sm flex flex-col hidden">
-                    <a href="{{ route('profile') }}"
+                    <a href="{{ route('user.show') }}"
                         class="flex items-center gap-2 px-4 py-2 text-gray-700 rounded-lg hover:text-[#FF5A4B] hover:bg-gray-100 transition">
                         <i class="bi bi-person"></i> Perfil
                     </a>
@@ -71,7 +71,7 @@
                         class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-100 transition">
                         <i class="bi bi-box-arrow-in-right"></i> Login
                     </a>
-                    <a href="{{ route('cadastro') }}"
+                    <a href="{{ route('register') }}"
                         class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-100 transition">
                         <i class="bi bi-person-plus-fill"></i> Cadastro
                     </a>
@@ -88,7 +88,7 @@
                 <p class="text-lg mb-6 leading-relaxed">
                     A plataforma completa de e-commerce para gerenciar produtos, carrinho, wishlist e muito mais.
                 </p>
-                <a href="{{ route('cadastro') }}"
+                <a href="{{ route('register') }}"
                     class="inline-block px-6 py-3 bg-white text-[#FF5A4B] font-semibold rounded-lg shadow hover:brightness-110 transition">
                     Comece Agora
                 </a>

@@ -1,32 +1,59 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CadastroController;
-use App\Http\Controllers\EdicaoController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DeleteController;
-use App\Http\Middleware\CheckLogged;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+use App\Http\Middleware\CheckLogged;
+use App\Models\Product;
 
-Route::get('/login', [LoginController::class, 'login'])->name('login');
-Route::get('/cadastro', [CadastroController::class, 'cadastro'])->name('cadastro');
+/*
+|--------------------------------------------------------------------------
+| Rotas Públicas (sem login)
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-Route::get('/create', [CadastroController::class, 'create'])->name('create');
+Route::get('/cadastro', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/cadastro', [AuthController::class, 'register'])->name('auth.register');
 
-Route::post('/loginSubmit', [AuthController::class, 'authLogin'])->name('auth.login');
-Route::post('/cadastroSubmit', [AuthController::class, 'authCadastro'])->name('auth.cadastro');
+/*
+|--------------------------------------------------------------------------
+| Rotas Protegidas (usuário logado)
+|--------------------------------------------------------------------------
+*/
+Route::middleware([CheckLogged::class])->group(function () {
+    // Autenticação
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware([CheckLogged::class])->group(
-    function () {
-        Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-        Route::post('/authEdit', [AuthController::class, 'authEdit'])->name('auth.edit');
-        Route::get('/delete', [DeleteController::class, 'delete'])->name('delete');
-        Route::get('/profile', [ProfileController::class, 'profileShow'])->name('profile');
-        Route::get('/editUser', [EdicaoController::class, 'editShow'])->name('editShow');
+    // Usuário
+    Route::get('/profile', [UserController::class, 'show'])->name('user.show');
+    Route::put('/profile', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/profile', [UserController::class, 'destroy'])->name('user.destroy');
+
+    // Produtos
+    Route::get('/dashboard', [ProductController::class, 'index'])->name('dashboard');
+    Route::get('/produto/novo', [ProductController::class, 'create'])->name('product.create');
+    Route::post('/produto', [ProductController::class, 'store'])->name('product.store');
+    Route::get('/produto/{id}/editar', [ProductController::class, 'edit'])->name('product.edit');
+    Route::put('/produto/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::delete('/produto/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Página inicial (Dashboard)
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function (Request $request) {
+    if (session()->missing('user')) {
+        return view('main.main_page');
     }
-);
 
-Route::get('/', function () {
-    return view('main_page');
+    $products = Product::orderBy('id', 'desc')->get();
+
+    return view('main.dashboard', compact('products'));
 })->name('index');
+

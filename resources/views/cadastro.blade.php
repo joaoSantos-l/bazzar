@@ -53,7 +53,7 @@
 
             <h3 class="text-center text-2xl font-semibold mb-6">Crie sua conta</h3>
 
-            <form action="{{ route('auth.cadastro') }}" method="POST" class="space-y-4">
+            <form action="{{ route('auth.register') }}" method="POST" class="space-y-4">
                 @csrf
 
                 <div>
