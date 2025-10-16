@@ -1,9 +1,8 @@
-````markdown
-# ![Bazzar Logo](./public/images/logo.png) Bazzar
+# ![Bazzar Logo](public/images/logo.png) Bazzar
 
 ## Grupo do Projeto
 - **Heitor Klaine**  
-- **João Vitor Lino  
+- **João Vitor Lino**  
 
 ## Turma
 Info 3
@@ -40,9 +39,9 @@ O objetivo do projeto é criar uma plataforma funcional de vendas online, inclui
 - Visualização rápida dos itens salvos.
 
 ## Setup
+
 ```bash
 git clone https://github.com/seu-usuario/bazzar.git
-
 cd bazzar
 
 composer install
@@ -61,4 +60,3 @@ php artisan key:generate
 php artisan migrate --seed
 
 php artisan serve
-
