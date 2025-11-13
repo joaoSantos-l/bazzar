@@ -65,7 +65,7 @@ return array(
     'PHPUnit\\Architecture\\' => array($vendorDir . '/ta-tikoma/phpunit-architecture-test/src'),
     'PHPStan\\PhpDocParser\\' => array($vendorDir . '/phpstan/phpdoc-parser/src'),
     'NunoMaduro\\Collision\\' => array($vendorDir . '/nunomaduro/collision/src'),
-    'Nette\\' => array($vendorDir . '/nette/utils/src'),
+    'Nette\\' => array($vendorDir . '/nette/schema/src', $vendorDir . '/nette/utils/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Mockery\\' => array($vendorDir . '/mockery/mockery/library/Mockery'),
     'League\\Uri\\' => array($vendorDir . '/league/uri', $vendorDir . '/league/uri-interfaces'),

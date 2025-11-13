@@ -2,8 +2,9 @@
 
 @section('content')
     <div x-data="notif()" x-init="@if (session('success')) showSuccessNotification() @endif
-    @if (session('deletion-success')) showDeletionSuccessNotification() @endif">
-        <div x-data="editModal()" x-init="@if ($errors->any() || session('edit-error')) open() @endif" class="flex-1 flex flex-col p-6 md:p-10 overflow-y-auto">
+            @if (session('deletion-success')) showDeletionSuccessNotification() @endif">
+        <div x-data="editModal()" x-init="@if ($errors->any() || session('edit-error')) open() @endif"
+            class="flex-1 flex flex-col p-6 md:p-10 overflow-y-auto">
             <div class="w-full max-w-4xl mx-auto">
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-gray-800">Seu Perfil</h1>
@@ -49,11 +50,10 @@
                                 <form action="{{ route('user.destroy') }}" method="POST" x-data="deleteConfirm()">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" @click="trigger($event)"
-                                        class="flex items-center justify-center gap-2 px-4 py-3 
-                                    bg-gradient-to-r from-red-500 to-red-600 text-white 
-                                    rounded-xl font-medium hover:from-red-600 hover:to-red-700 
-                                    transition-all shadow-md hover:shadow-lg w-full">
+                                    <button type="submit" @click="trigger($event)" class="flex items-center justify-center gap-2 px-4 py-3 
+                                            bg-gradient-to-r from-red-500 to-red-600 text-white 
+                                            rounded-xl font-medium hover:from-red-600 hover:to-red-700 
+                                            transition-all shadow-md hover:shadow-lg w-full">
                                         <i class="bi bi-trash3"></i>
                                         <span x-text="confirm ? 'Você tem certeza?' : 'Deletar Conta'"></span>
                                     </button>
@@ -89,10 +89,19 @@
                                     <i class="bi bi-grid-3x3-gap text-[#FF5A4B] mr-2"></i>
                                     Meus Produtos
                                 </h3>
-                                <a href="#"
-                                    class="text-[#FF5A4B] hover:text-[#FF3D3B] font-medium text-sm">Gerenciar</a>
                             </div>
                             <p class="text-gray-500 mb-4">Produtos que você está vendendo</p>
+                            <div class="grid grid-cols-3 gap-4">
+
+                                @foreach ($user_products as $product)
+                                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                                <h1 class="text-xl font-semibold text-gray-800 flex items-center">{{ $product->productName }}</h1>
+                                    <h1>Descrição: {{$product->description}}</h1>
+                                    <p class="text-[#FF5A4B] font-bold mb-3">
+                                            R${{ number_format($product->price, 2, ',', '.') }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                         <div class="text-center mt-6">
                             <a href="{{ route('index') }}"
@@ -127,8 +136,7 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
-                                    <input type="email" name="edit_email"
-                                        value="{{ old('edit_email', $user_data->email) }}"
+                                    <input type="email" name="edit_email" value="{{ old('edit_email', $user_data->email) }}"
                                         class="w-full pl-3 pr-10 py-3 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-[#FF5A4B] transition">
                                     @error('edit_email')
                                         <div class="text-red-500 text-xs mt-1 flex items-center gap-1">

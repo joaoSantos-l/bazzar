@@ -25,9 +25,11 @@ public function index(Request $request)
         
         return view('main.product.create', compact('user_data'));
     }
-
+    
     public function store(Request $request)
     {
+
+        echo (request()->null);
         $validated = $request->validate([
             'productName' => 'required|string|max:255',
             'seller' => 'required|string|max:30',
@@ -36,8 +38,11 @@ public function index(Request $request)
             'price' => 'required|numeric|min:0',
         ]);
 
-        $validated['user_id'] = session('user.id');
 
+    //$imageName = time().'.'.request()->image->getClientOriginalExtension();
+    request()->image->move(public_path('images'), 'oi');
+
+        $validated['user_id'] = session('user.id');
         Product::create($validated);
 
         return redirect()->route('dashboard')->with('success', 'Produto adicionado com sucesso!');

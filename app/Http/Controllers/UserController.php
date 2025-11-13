@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,10 @@ class UserController extends Controller
         $id = session('user.id');
         $user_data = Usuario::findOrFail($id);
 
-        return view('main.user.profile', compact('user_data'));
+        $productQuery = Product::query();
+        $user_products = $productQuery->where('user_id', Session('user')['id'])->get();
+
+        return view('main.user.profile', compact('user_data', 'user_products'));
     }
 
     public function update(Request $request)
@@ -23,7 +27,7 @@ class UserController extends Controller
 
         $data = $request->validate([
             'edit_name' => ['required', 'string', 'max:255'],
-            'edit_email' => ['required', 'email', 'unique:users,email,' . $user->id],
+            'edit_email' => ['required', 'email', 'unique:users,email,'.$user->id],
             'edit_password' => [
                 'nullable', 'string', 'min:8', 'max:16',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
@@ -34,14 +38,14 @@ class UserController extends Controller
         $user->user = $data['edit_name'];
         $user->email = $data['edit_email'];
 
-        if (!empty($data['edit_password'])) {
+        if (! empty($data['edit_password'])) {
             $user->senha = Hash::make($data['edit_password']);
         }
 
         $user->save();
 
-            return redirect()->route('user.show')->with('success', 'Perfil atualizado com sucesso!');
-        }
+        return redirect()->route('user.show')->with('success', 'Perfil atualizado com sucesso!');
+    }
 
     public function destroy()
     {
@@ -51,6 +55,6 @@ class UserController extends Controller
 
         session()->forget('user');
 
-    return redirect()->route('index')->with('deletion-success', 'Conta deletada com sucesso!');
+        return redirect()->route('index')->with('deletion-success', 'Conta deletada com sucesso!');
     }
 }
