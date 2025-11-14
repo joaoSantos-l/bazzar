@@ -2,9 +2,8 @@
 
 @section('content')
     <div x-data="notif()" x-init="@if (session('success')) showSuccessNotification() @endif
-            @if (session('deletion-success')) showDeletionSuccessNotification() @endif">
-        <div x-data="editModal()" x-init="@if ($errors->any() || session('edit-error')) open() @endif"
-            class="flex-1 flex flex-col p-6 md:p-10 overflow-y-auto">
+    @if (session('deletion-success')) showDeletionSuccessNotification() @endif">
+        <div x-data="editModal()" x-init="@if ($errors->any() || session('edit-error')) open() @endif" class="flex-1 flex flex-col p-6 md:p-10 overflow-y-auto">
             <div class="w-full max-w-4xl mx-auto">
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-gray-800">Seu Perfil</h1>
@@ -50,7 +49,8 @@
                                 <form action="{{ route('user.destroy') }}" method="POST" x-data="deleteConfirm()">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" @click="trigger($event)" class="flex items-center justify-center gap-2 px-4 py-3 
+                                    <button type="submit" @click="trigger($event)"
+                                        class="flex items-center justify-center gap-2 px-4 py-3 
                                             bg-gradient-to-r from-red-500 to-red-600 text-white 
                                             rounded-xl font-medium hover:from-red-600 hover:to-red-700 
                                             transition-all shadow-md hover:shadow-lg w-full">
@@ -94,11 +94,32 @@
                             <div class="grid grid-cols-3 gap-4">
 
                                 @foreach ($user_products as $product)
-                                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                                <h1 class="text-xl font-semibold text-gray-800 flex items-center">{{ $product->productName }}</h1>
-                                    <h1>Descrição: {{$product->description}}</h1>
-                                    <p class="text-[#FF5A4B] font-bold mb-3">
-                                            R${{ number_format($product->price, 2, ',', '.') }}</p>
+                                    <div
+                                        class="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100">
+                                        <img src="{{ asset('storage/' . $product->image_path) }}"
+                                            alt="{{ $product->productName }}"
+                                            style="width: 200px; height: 100px; object-fit: cover;">
+                                        <div class="p-4 flex flex-col justify-between">
+                                            <h3 class="font-semibold text-gray-800 mb-2 truncate">
+                                                {{ $product->productName }}</h3>
+                                            <p class="text-[#FF5A4B] font-bold mb-3">R$
+                                                {{ number_format($product->price, 2, ',', '.') }}</p>
+                                            <div class="flex justify-between items-center">
+                                                <a href="{{ route('product.edit', $product->id) }}"II
+                                                    class="text-sm text-gray-600 hover:text-[#FF5A4B] transition">
+                                                    Editar
+                                                </a>
+                                                <form action="{{ route('product.destroy', $product->id) }}" method="POST"
+                                                    onsubmit="return confirm('Excluir este produto?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="text-red-500 hover:text-red-700 transition">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -136,7 +157,8 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
-                                    <input type="email" name="edit_email" value="{{ old('edit_email', $user_data->email) }}"
+                                    <input type="email" name="edit_email"
+                                        value="{{ old('edit_email', $user_data->email) }}"
                                         class="w-full pl-3 pr-10 py-3 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-[#FF5A4B] transition">
                                     @error('edit_email')
                                         <div class="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -147,7 +169,8 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
-                                    <input type="text" name="edit_name" value="{{ old('edit_name', $user_data->user) }}"
+                                    <input type="text" name="edit_name"
+                                        value="{{ old('edit_name', $user_data->user) }}"
                                         class="w-full pl-3 pr-10 py-3 rounded-lg border border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-[#FF5A4B] transition">
                                     @error('edit_name')
                                         <div class="text-red-500 text-xs mt-1 flex items-center gap-1">

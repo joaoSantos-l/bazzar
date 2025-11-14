@@ -82,25 +82,27 @@
                     @foreach ($products as $product)
                         <div
                             class="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100">
-                            <img src="{{ $product->image_url ?? asset('images/placeholder.png') }}"
-                                alt="{{ $product->productName }}" class="h-48 w-full object-cover">
+                            <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->productName }}"
+                                style="width: 500px; height: 300px; object-fit: cover;">
                             <div class="p-4 flex flex-col justify-between">
                                 <h3 class="font-semibold text-gray-800 mb-2 truncate">{{ $product->productName }}</h3>
                                 <p class="text-[#FF5A4B] font-bold mb-3">R$
                                     {{ number_format($product->price, 2, ',', '.') }}</p>
                                 <div class="flex justify-between items-center">
-                                    <a href="{{ route('product.edit', $product->id) }}"
-                                        class="text-sm text-gray-600 hover:text-[#FF5A4B] transition">
-                                        Editar
-                                    </a>
-                                    <form action="{{ route('product.destroy', $product->id) }}" method="POST"
-                                        onsubmit="return confirm('Excluir este produto?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:text-red-700 transition">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                    @if (Session('user')['id'] == $product->user_id)
+                                        <a href="{{ route('product.edit', $product->id) }}"II
+                                            class="text-sm text-gray-600 hover:text-[#FF5A4B] transition">
+                                            Editar
+                                        </a>
+                                        <form action="{{ route('product.destroy', $product->id) }}" method="POST"
+                                            onsubmit="return confirm('Excluir este produto?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 hover:text-red-700 transition">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
 
                                 <button class="text-[#FF5A4B] hover:text-[#FF3D3B] transition">

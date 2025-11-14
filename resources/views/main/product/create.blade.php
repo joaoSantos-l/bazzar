@@ -5,7 +5,7 @@
         <div class="max-w-2xl mx-auto bg-white shadow-md rounded-xl p-8">
             <h1 class="text-2xl font-bold text-gray-800 mb-6">Adicionar Produto</h1>
 
-            <form action="{{ route('product.store') }}" method="POST" class="space-y-5">
+            <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5>
                 @csrf
                 <div>
                     <label class="block text-gray-700 font-semibold">Nome do Produto</label>
