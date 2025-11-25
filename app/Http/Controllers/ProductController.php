@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Wishlist;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -16,7 +17,11 @@ class ProductController extends Controller
 
         $products = $query->orderBy('id', 'desc')->get();
 
-        return view('main.dashboard', compact('products'));
+        $wishlistIds = Wishlist::where('user_id', session('user')['id'])
+            ->pluck('product_id')
+            ->toArray();
+
+        return view('main.dashboard', compact('products', 'wishlistIds'));
     }
 
 
@@ -55,7 +60,7 @@ class ProductController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Produto adicionado com sucesso!');
     }
-    
+
     public function edit(Request $request, $id)
     {
         $previousUrl = $request->header('referer');

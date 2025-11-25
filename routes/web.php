@@ -6,8 +6,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\CheckLogged;
 use App\Models\Product;
+use App\Models\Wishlist;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +43,9 @@ Route::middleware([CheckLogged::class])->group(function () {
     Route::get('/produto/{id}/editar', [ProductController::class, 'edit'])->name('product.edit');
     Route::put('/produto/{id}', [ProductController::class, 'update'])->name('product.update');
     Route::delete('/produto/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+
+    // Wishlist
+    Route::post('/wishlist/toggle/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
 });
 
 /*
@@ -54,7 +59,10 @@ Route::get('/', function (Request $request) {
     }
 
     $products = Product::orderBy('id', 'desc')->get();
+    $wishlistIds = Wishlist::where('user_id', session('user')['id'])
+        ->pluck('product_id')
+        ->toArray();
 
-    return view('main.dashboard', compact('products'));
+    return view('main.dashboard', compact('products', 'wishlistIds'));
 })->name('index');
 

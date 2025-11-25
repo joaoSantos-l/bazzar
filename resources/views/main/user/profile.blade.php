@@ -71,6 +71,34 @@
                                 </h3>
                             </div>
                             <p class="text-gray-500 mb-4">Seus produtos favoritos</p>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach ($wishlist as $item)
+                                    <div
+                                        class="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100">
+                                        <img src="{{ asset('storage/' . $item->product->image_path) }}"
+                                            alt="{{ $item->product->productName }}"
+                                            style="width: 200px; height: 100px; object-fit: cover;">
+                                        <div class="p-4 flex flex-col justify-between">
+                                            <h3 class="font-semibold text-gray-800 mb-2 truncate">
+                                                {{ $item->product->productName }}</h3>
+                                            <p class="text-[#FF5A4B] font-bold mb-3">R$
+                                                {{ number_format($item->product->price, 2, ',', '.') }}</p>
+                                            <form action="{{ route('wishlist.toggle', $item->product->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="text-[#FF5A4B] hover:text-[#FF3D3B] transition text-2xl">
+                                                    @if (in_array($item->product->id, $wishlistIds))
+                                                        <i class="bi bi-heart-fill"></i>
+                                                    @else
+                                                        <i class="bi bi-heart"></i>
+                                                    @endif
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
 
                         <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
@@ -92,7 +120,6 @@
                             </div>
                             <p class="text-gray-500 mb-4">Produtos que você está vendendo</p>
                             <div class="grid grid-cols-3 gap-4">
-
                                 @foreach ($user_products as $product)
                                     <div
                                         class="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100">

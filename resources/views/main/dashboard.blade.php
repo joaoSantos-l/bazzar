@@ -94,20 +94,34 @@
                                             class="text-sm text-gray-600 hover:text-[#FF5A4B] transition">
                                             Editar
                                         </a>
-                                        <form action="{{ route('product.destroy', $product->id) }}" method="POST"
-                                            onsubmit="return confirm('Excluir este produto?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500 hover:text-red-700 transition">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+
+                                        <div class="flex gap-3">
+                                            <form action="{{ route('product.destroy', $product->id) }}" method="POST"
+                                                onsubmit="return confirm('Excluir este produto?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500 hover:text-red-700 transition">
+                                                    <i class="bi bi-trash text-2xl"></i>
+                                                </button>
+                                            </form>
+
+                                            <form action="{{ route('wishlist.toggle', $product->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="text-[#FF5A4B] hover:text-[#FF3D3B] transition text-2xl">
+                                                    @if (in_array($product->id, $wishlistIds))
+                                                        <i class="bi bi-heart-fill"></i>
+                                                    @else
+                                                        <i class="bi bi-heart"></i>
+                                                    @endif
+                                                </button>
+                                            </form>
+
+
+                                        </div>
                                     @endif
                                 </div>
 
-                                <button class="text-[#FF5A4B] hover:text-[#FF3D3B] transition">
-                                    <i class="bi bi-heart"></i>
-                                </button>
                             </div>
                         </div>
                     @endforeach

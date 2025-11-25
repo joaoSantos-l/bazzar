@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Usuario;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,9 +16,14 @@ class UserController extends Controller
         $user_data = Usuario::findOrFail($id);
 
         $productQuery = Product::query();
-        $user_products = $productQuery->where('user_id', Session('user')['id'])->get();
+        $user_products = $productQuery->where('user_id', $id)->get();
+        $wishlistQuery = Wishlist::query();
+        $wishlist = $wishlistQuery->where('user_id', $id)->with('product')->get();
+        $wishlistIds = Wishlist::where('user_id', session('user')['id'])
+            ->pluck('product_id')
+            ->toArray();
 
-        return view('main.user.profile', compact('user_data', 'user_products'));
+        return view('main.user.profile', compact('user_data', 'user_products', 'wishlist', 'wishlistIds'));
     }
 
     public function update(Request $request)
@@ -27,9 +33,12 @@ class UserController extends Controller
 
         $data = $request->validate([
             'edit_name' => ['required', 'string', 'max:255'],
-            'edit_email' => ['required', 'email', 'unique:users,email,'.$user->id],
+            'edit_email' => ['required', 'email', 'unique:users,email,' . $user->id],
             'edit_password' => [
-                'nullable', 'string', 'min:8', 'max:16',
+                'nullable',
+                'string',
+                'min:8',
+                'max:16',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
                 'confirmed',
             ],
@@ -38,7 +47,7 @@ class UserController extends Controller
         $user->user = $data['edit_name'];
         $user->email = $data['edit_email'];
 
-        if (! empty($data['edit_password'])) {
+        if (!empty($data['edit_password'])) {
             $user->senha = Hash::make($data['edit_password']);
         }
 

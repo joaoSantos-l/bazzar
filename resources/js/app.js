@@ -1,5 +1,6 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
+
 import './components/slider';
 import notif from './components/notif';
 import editModal from './components/edit-modal';
