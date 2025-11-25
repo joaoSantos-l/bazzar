@@ -61,6 +61,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="text-center mt-6">
+                <a href="{{ route('cart.show') }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
+                    <i class="bi bi-arrow-left"></i> Carrinho
+                </a>
+            </div>
 
                     <div class="lg:col-span-2">
                         <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">

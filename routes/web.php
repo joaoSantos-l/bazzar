@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ImageUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,10 @@ Route::middleware([CheckLogged::class])->group(function () {
 
     // Wishlist
     Route::post('/wishlist/toggle/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+
+    //Cart
+    Route::get(uri:'/cart',action:[CartController::class,'show'])->name(name:'cart.show');
+    Route::post(uri:'/cart/toggle/{product}', action:[CartController::class, 'toggle'])->name(name:'Cart.toggle');
 });
 
 /*

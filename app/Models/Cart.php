@@ -6,5 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    //
+    protected $table = 'Cart';
+
+    protected $fillable = [
+        'user_id',
+        'product_id',
+        'quantity',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(Usuario::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }
