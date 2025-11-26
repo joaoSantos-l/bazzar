@@ -17,6 +17,16 @@ class Usuario extends Model
         'senha',
     ];
 
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
     public static function searchByUser(string $user)
     {
         return self::where('user', $user)->first();

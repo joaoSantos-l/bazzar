@@ -12,9 +12,10 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('user', 25);
-            $table->string('email', 30)->unique();
+            $table->string('user', 100);
+            $table->string('email', 100)->unique();
             $table->string('senha', 255);
+            $table->boolean('admin')->default(false);
             $table->timestamps();
         });
         Schema::create('password_reset_tokens', function (Blueprint $table) {

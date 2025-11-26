@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Wishlist;
 use App\Models\Usuario;
+use App\Models\Cart;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
@@ -13,15 +14,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
-
-        $products = $query->orderBy('id', 'desc')->get();
-
-        $wishlistIds = Wishlist::where('user_id', session('user')['id'])
-            ->pluck('product_id')
-            ->toArray();
-
-        return view('main.dashboard', compact('products', 'wishlistIds'));
+        return redirect()->route('index');
     }
 
 

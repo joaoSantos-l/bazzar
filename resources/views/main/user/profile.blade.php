@@ -1,9 +1,87 @@
 @extends('layouts.main_layout')
 
 @section('content')
+    <nav class="bg-white shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-50">
+        <div class="hidden md:flex items-center gap-2">
+            <a href="{{ route('index') }}">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-14">
+            </a>
+
+        </div>
+
+        <div class="flex items-center gap-4">
+
+            <a href="{{ route('cart.show') }}" class="relative">
+                <i class="bi bi-cart text-2xl"></i>
+
+                <span class="absolute -top-2 -right-3 bg-[#FF5A4B] text-white text-xs px-2 py-1 rounded-full">
+                    {{ $cartSummary->total_qty ?? 0 }}
+                </span>
+            </a>
+
+            <span class="font-semibold text-gray-700">
+                R$ {{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}
+            </span>
+
+            @if ($user_data->admin)
+                <div class="hidden md:flex gap-2">
+                    <a href="{{ route('admin.users') }}"
+                        class="flex items-center cursor-pointer gap-2 font-semibold md:p-3 rounded-lg md:text-2xl text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-200 transition">
+                        <i class="bi bi-people-fill"></i> Usuários
+                    </a>
+                </div>
+
+                <div class="hidden md:flex gap-2">
+                    <a href="{{ route('dashboard') }}"
+                        class="flex items-center cursor-pointer gap-2 font-semibold md:p-3 rounded-lg md:text-2xl text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-200 transition">
+                        <i class="bi bi-bag-fill"></i> Produtos
+                    </a>
+                </div>
+            @endif
+
+            <div class="hidden md:flex gap-2">
+                <button id="profileMenuButton"
+                    class="flex items-center cursor-pointer gap-2 font-semibold md:p-3 rounded-lg md:text-2xl text-[#FF5A4B] hover:text-[#FF5A4B] hover:bg-gray-200 transition">
+                    <i class="bi bi-person-fill"></i> Perfil
+                </button>
+            </div>
+
+            <div id="profileMenu"
+                class="p-4 absolute top-18 right-6 mt-2 bg-white rounded-lg inset-shadow-sm flex flex-col hidden">
+                <a href="{{ route('user.show') }}"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-700 rounded-lg hover:text-[#FF5A4B] hover:bg-gray-100 transition">
+                    <i class="bi bi-person"></i> Perfil
+                </a>
+                <a href="{{ route('logout') }}"
+                    class="flex items-center gap-2 px-4 py-2 text-red-500 rounded-lg hover:text-white hover:bg-red-700 transition">
+                    <i class="bi bi-box-arrow-in-left"></i> Logout
+                </a>
+            </div>
+
+            <div class="md:hidden">
+                <button id="mobileMenuButton" class="text-gray-700 text-2xl focus:outline-none">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+
+            <div id="mobileMenu"
+                class="p-4 absolute top-18 right-6 mt-2 bg-white rounded-lg inset-shadow-sm flex flex-col hidden">
+                <a href="{{ route('login') }}"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-100 transition">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="{{ route('register') }}"
+                    class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-100 transition">
+                    <i class="bi bi-person-plus-fill"></i> Cadastro
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <div x-data="notif()" x-init="@if (session('success')) showSuccessNotification() @endif
     @if (session('deletion-success')) showDeletionSuccessNotification() @endif">
         <div x-data="editModal()" x-init="@if ($errors->any() || session('edit-error')) open() @endif" class="flex-1 flex flex-col p-6 md:p-10 overflow-y-auto">
+
             <div class="w-full max-w-4xl mx-auto">
                 <div class="text-center mb-8">
                     <h1 class="text-3xl font-bold text-gray-800">Seu Perfil</h1>
@@ -18,7 +96,14 @@
                                     class="w-20 h-20 bg-gradient-to-br from-[#FF7A66] to-[#FF3D3B] rounded-full flex items-center justify-center text-white font-bold text-2xl mb-4">
                                     <i class="bi bi-person-fill"></i>
                                 </div>
-                                <h2 class="text-xl font-semibold text-gray-800 text-center">{{ $user_data->user }}</h2>
+                                <h2 class="text-xl font-semibold text-gray-800 text-center">{{ $user_data->user }}
+
+                                    @if ($user_data->admin)
+                                        (
+                                        <i class="bi bi-shield-lock text-[#FF5A4B] font-normal"> Admin</i>
+                                        )
+                                    @endif
+                                </h2>
                                 <p class="text-gray-500 text-sm mt-1">Membro desde {{ $user_data->created_at->year }}</p>
                             </div>
 
@@ -61,12 +146,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-center mt-6">
-                <a href="{{ route('cart.show') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
-                    <i class="bi bi-arrow-left"></i> Carrinho
-                </a>
-            </div>
 
                     <div class="lg:col-span-2">
                         <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
@@ -89,7 +168,8 @@
                                                 {{ $item->product->productName }}</h3>
                                             <p class="text-[#FF5A4B] font-bold mb-3">R$
                                                 {{ number_format($item->product->price, 2, ',', '.') }}</p>
-                                            <form action="{{ route('wishlist.toggle', $item->product->id) }}" method="POST">
+                                            <form action="{{ route('wishlist.toggle', $item->product->id) }}"
+                                                method="POST">
                                                 @csrf
                                                 <button type="submit"
                                                     class="text-[#FF5A4B] hover:text-[#FF3D3B] transition text-2xl">
@@ -142,8 +222,8 @@
                                                     class="text-sm text-gray-600 hover:text-[#FF5A4B] transition">
                                                     Editar
                                                 </a>
-                                                <form action="{{ route('product.destroy', $product->id) }}" method="POST"
-                                                    onsubmit="return confirm('Excluir este produto?')">
+                                                <form action="{{ route('product.destroy', $product->id) }}"
+                                                    method="POST" onsubmit="return confirm('Excluir este produto?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -156,12 +236,6 @@
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
-                        <div class="text-center mt-6">
-                            <a href="{{ route('index') }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition">
-                                <i class="bi bi-arrow-left"></i> Voltar para a página principal
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -260,4 +334,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const profileButton = document.getElementById('profileMenuButton');
+        const profileMenu = document.getElementById('profileMenu');
+        profileButton?.addEventListener('click', () => profileMenu.classList.toggle('hidden'));
+    </script>
 @endsection

@@ -23,6 +23,18 @@
                     <i class="bi bi-plus-circle"></i> Adicionar Produto
                 </a>
 
+                <a href="{{ route('cart.show') }}" class="relative">
+                    <i class="bi bi-cart text-2xl"></i>
+
+                    <span class="absolute -top-2 -right-3 bg-[#FF5A4B] text-white text-xs px-2 py-1 rounded-full">
+                        {{ $cartSummary->total_qty ?? 0 }}
+                    </span>
+                </a>
+
+                <span class="font-semibold text-gray-700">
+                    R$ {{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}
+                </span>
+
 
                 <div class="hidden md:flex gap-2">
                     <button id="profileMenuButton"
@@ -100,27 +112,47 @@
                                                 onsubmit="return confirm('Excluir este produto?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:text-red-700 transition">
+                                                <button type="submit"
+                                                    class="text-red-500 hover:text-red-700 transition cursor-pointer">
                                                     <i class="bi bi-trash text-2xl"></i>
                                                 </button>
                                             </form>
-
-                                            <form action="{{ route('wishlist.toggle', $product->id) }}" method="POST">
-                                                @csrf
-                                                <button type="submit"
-                                                    class="text-[#FF5A4B] hover:text-[#FF3D3B] transition text-2xl">
-                                                    @if (in_array($product->id, $wishlistIds))
-                                                        <i class="bi bi-heart-fill"></i>
-                                                    @else
-                                                        <i class="bi bi-heart"></i>
-                                                    @endif
-                                                </button>
-                                            </form>
-
-
                                         </div>
                                     @endif
+
+                                    <form action="{{ route('wishlist.toggle', $product->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="text-[#FF5A4B] hover:text-[#FF3D3B] transition text-2xl cursor-pointer">
+                                            @if (in_array($product->id, $wishlistIds))
+                                                <i class="bi bi-heart-fill"></i>
+                                            @else
+                                                <i class="bi bi-heart"></i>
+                                            @endif
+                                        </button>
+                                    </form>
+
                                 </div>
+                                <div x-data="cartComponent({{ $product->id }}, {{ $cartItems[$product->id] ?? 0 }})" class="h-[48px] flex flex-col items-center mt-4">
+                                    <button x-show="!inCart()" @click="increase"
+                                        class="bg-[#FF5A4B] text-white px-3 py-2 rounded-full hover:brightness-110 cursor-pointer">
+                                        <i class="bi bi-cart-plus text-xl mr-2"></i>
+                                        Adicionar ao carrinho
+                                    </button>
+
+                                    <div x-show="inCart()" class="flex items-center gap-3 mt-2">
+
+                                        <button @click="decrease"
+                                            class="bg-gray-300 px-2 py-1 rounded cursor-pointer">-</button>
+
+                                        <span x-text="qty"></span>
+
+                                        <button @click="increase"
+                                            class="bg-gray-300 px-2 py-1 rounded cursor-pointer">+</button>
+
+                                    </div>
+                                </div>
+
 
                             </div>
                         </div>
@@ -130,9 +162,9 @@
 
         </section>
 
-        <footer class="bg-white mt-auto py-6 text-center text-gray-400 border-t">
-            &copy; {{ date('Y') }} Bazzar. Todos os direitos reservados.
-        </footer>
+        <div class="text-center mb-8 pt-6 border-t border-gray-200">
+            <p class="text-xs text-gray-400">&copy; {{ date('Y') }} Bazzar. Todos os direitos reservados.</p>
+        </div>
     </div>
 
     <script>
