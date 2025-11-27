@@ -58,13 +58,13 @@
                     <div class="bg-white shadow-md rounded-lg p-6 sticky top-4">
                         <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Resumo do Pedido</h2>
                         <div class="space-y-2 text-gray-700">
-                            <div x-data="{ subtotal: {{ $cartSummary->total_price }} }" class="flex justify-between"
+                            <div x-data="{ subtotal: '{{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}' }" class="flex justify-between"
                                 @cart-updated.window="subtotal = event.detail.total_price">
                                 <span>Subtotal:</span>
                                 <span x-text="subtotal"></span>
                             </div>
                             <div class="flex justify-between font-bold text-lg pt-2 mt-2">
-                                <div x-data="{ total: {{ $cartSummary->total_price }} }" class="flex justify-between"
+                                <div x-data="{ total: '{{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}' }" class="flex justify-between"
                                     @cart-updated.window="total = event.detail.total_price">
                                     <span>Total: R$ </span>
                                     <span x-text="total"></span>

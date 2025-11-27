@@ -8,6 +8,7 @@ import deleteConfirm from './components/delete-confirm';
 import passwordToggle from './components/password-toggle';
 import cartComponent from "./components/cart";
 import searchComponent from './components/search';
+import location from './location';
 
 window.Alpine = Alpine;
 
@@ -15,8 +16,9 @@ Alpine.data('notif', notif);
 Alpine.data('editModal', editModal);
 Alpine.data('deleteConfirm', deleteConfirm);
 Alpine.data('passwordToggle', passwordToggle);
-Alpine.data("cartComponent", cartComponent);
+Alpine.data('cartComponent', cartComponent);
 Alpine.data('searchComponent', searchComponent);
+Alpine.data('location', location);
 
 
 Alpine.start();

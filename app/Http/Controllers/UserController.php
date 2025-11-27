@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Usuario;
 use App\Models\Wishlist;
@@ -29,7 +30,9 @@ class UserController extends Controller
             ->selectRaw('SUM(cart.quantity) as total_qty, SUM(cart.quantity * products.price) as total_price')
             ->first();
 
-        return view('main.user.profile', compact('user_data', 'user_products', 'wishlist', 'wishlistIds', 'cartSummary'));
+        $orders = Order::where('user_id', $id)->get();
+
+        return view('main.user.profile', compact('user_data', 'user_products', 'wishlist', 'wishlistIds', 'cartSummary', 'orders'));
     }
 
     public function update(Request $request)

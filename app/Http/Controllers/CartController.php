@@ -94,7 +94,7 @@ class CartController extends Controller
 
     private function getCartSummary()
     {
-        $cartItems = Cart::where('user_id', session('user')['id'])
+        $cartItems = Cart::where('user_id', Session('user')['id'])
             ->with('product')
             ->get();
 

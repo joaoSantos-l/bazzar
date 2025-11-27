@@ -152,7 +152,7 @@
                     </div>
 
                     <div class="lg:col-span-2">
-                        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+                        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100 overflow-x-auto">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-xl font-semibold text-gray-800 flex items-center">
                                     <i class="bi bi-heart text-[#FF5A4B] mr-2"></i>
@@ -199,9 +199,34 @@
                                 </h3>
                             </div>
                             <p class="text-gray-500 mb-4">Seus pedidos recentes</p>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach ($orders as $order)
+                                    <div
+                                        class="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100">
+                                        <div class="p-4 flex flex-col justify-between">
+                                            <h3 class="font-semibold text-gray-800 mb-2 truncate">Pedido
+                                                {{ $order->id }}</h3>
+                                            <p class="text-[#FF5A4B] font-bold">
+                                                R$ {{ number_format($order->total_price, 2, ',', '.') }}</p>
+                                            </p>
+                                            <p class="text-gray-600 text-sm">
+                                                {{ $order->street }}, {{ $order->number }} - {{ $order->cep }}
+                                            </p>
+                                            <p class="text-gray-500 text-[12px]">
+                                                {{ $order->city }}
+                                            </p>
+                                            <p class="text-gray-500 text-[12px]">
+                                                {{ $order->state }}
+                                            </p>
+
+
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
 
-                        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 overflow-x-auto">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-xl font-semibold text-gray-800 flex items-center">
                                     <i class="bi bi-grid-3x3-gap text-[#FF5A4B] mr-2"></i>
@@ -245,7 +270,8 @@
                 </div>
 
                 <div class="text-center mt-8 pt-6 border-t border-gray-200">
-                    <p class="text-xs text-gray-400">&copy; {{ date('Y') }} Bazzar. Todos os direitos reservados.</p>
+                    <p class="text-xs text-gray-400">&copy; {{ date('Y') }} Bazzar. Todos os direitos reservados.
+                    </p>
                 </div>
 
                 <div x-show="isOpen" x-trap.noscroll x-transition.opacity @click="close()"
@@ -292,7 +318,8 @@
 
                                 <div x-data="passwordToggle()" class="relative">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        Nova Senha <span class="text-gray-500 font-normal text-xs">(deixe em branco para
+                                        Nova Senha <span class="text-gray-500 font-normal text-xs">(deixe em branco
+                                            para
                                             manter
                                             a atual)</span>
                                     </label>

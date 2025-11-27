@@ -27,6 +27,11 @@ class Usuario extends Model
         return $this->hasMany(Cart::class);
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public static function searchByUser(string $user)
     {
         return self::where('user', $user)->first();

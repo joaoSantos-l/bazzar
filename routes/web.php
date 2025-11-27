@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ImageUploadController;
+use App\Http\Controllers\OrderController;
 use App\Http\Middleware\CheckAdmin;
 use App\Models\Cart;
 use Illuminate\Http\Request;
@@ -72,10 +73,12 @@ Route::middleware([CheckLogged::class])->group(function () {
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/destroy/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
 
-    // Checkout (POC Temp)
-    Route::get('/checkout', function () {
-        return view('main.checkout');
-    })->name('checkout');
+    // Checkout
+    Route::get(
+        '/checkout',
+        [OrderController::class, 'show']
+    )->name('checkout');
+    Route::post('/checkout/finalizar', [OrderController::class,'store'])->name('order.store');
 });
 
 Route::get('/', function (Request $request) {

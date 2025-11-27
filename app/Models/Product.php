@@ -20,7 +20,6 @@ class Product extends Model
         'image_path',
     ];
 
-
     public static function searchByProduct($product){
         return self::where('product',$product)->get()->first();
     }
