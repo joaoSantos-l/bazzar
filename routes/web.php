@@ -104,27 +104,13 @@ Route::get('/', function (Request $request) {
 
             $products = $productsQuery->get();
 
-            $wishlistIds = [];
-            $cartItems = [];
-
-            if (session()->has('user')) {
-                $wishlistIds = Wishlist::where('user_id', session('user')['id'])
-                    ->pluck('product_id')
-                    ->toArray();
-
-                $cartItems = Cart::where('user_id', session('user')['id'])
-                    ->pluck('quantity', 'product_id')
-                    ->toArray();
-            }
-
             Log::info('AJAX search results', [
                 'query' => $query,
                 'products_count' => $products->count(),
-                'wishlist_count' => count($wishlistIds)
             ]);
 
             if ($products->isEmpty()) {
-                return response('<div class="p-4 text-gray-500 text-center">Nenhum produto encontrado para "' . e($query) . '"</div>');
+                return response('<div class="p-4 text-gray-500 text-center">Nenhum produto encontrado para "' . e($query) . '   "</div>');
             }
 
             return view('main.partials.search_results', compact('products'));

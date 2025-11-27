@@ -15,6 +15,14 @@ class UserSeeder extends Seeder
             'email' => 'admin@mail.com',
             'senha' => Hash::make('@SilkSong2'),
             'admin' => true,
+            ]
+        );
+
+        Usuario::create(        [
+            'user' => 'Korn',
+            'email' => 'korn@gmail.com',
+            'senha' => Hash::make('@Kornifero200'),
+            'admin' => false,
         ]);
 
         Usuario::factory()->count(50)->create();

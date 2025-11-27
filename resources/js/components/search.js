@@ -25,7 +25,7 @@ export default function searchComponent() {
             this.isVisible = false; 
         },
 
-        performSearch(source = 'input') {
+        performSearch() {
             const query = this.query.trim();
 
             clearTimeout(this.searchTimeout);
@@ -47,7 +47,7 @@ export default function searchComponent() {
                 this.executeSearch(query);
             }, 300);
         },
-
+        
         executeSearch(query) {
             if (this.controller) {
                 this.controller.abort();
@@ -63,6 +63,7 @@ export default function searchComponent() {
                 signal: this.controller.signal
             })
             .then(response => {
+                console.log(url, response.data)
                 this.results = response.data;
                 this.isLoading = false;
             })
