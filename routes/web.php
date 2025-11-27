@@ -46,8 +46,10 @@ Route::middleware([CheckLogged::class])->group(function () {
 
     // Admin
     Route::middleware([CheckAdmin::class])->group(function () {
-        Route::get('/admin/users', [AdminController::class, 'show'])->name('admin.users');
+        Route::get('/admin/users', [AdminController::class, 'showUsers'])->name('admin.users');
         Route::post('/admin/users/sudo/{id}', [AdminController::class, 'sudo'])->name('admin.users.sudo');
+        // Nova rota para a lista de produtos do admin (POC)
+        Route::get('/admin/products', [AdminController::class, 'showProducts'])->name('admin.products');
     });
 
 
@@ -68,17 +70,83 @@ Route::middleware([CheckLogged::class])->group(function () {
     Route::get('/cart', [CartController::class, 'show'])->name('cart.show');
     Route::post('/cart/toggle/{product}', [CartController::class, 'toggle'])->name('cart.toggle');
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/destroy/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+    // Checkout (POC Temp)
+    Route::get('/checkout', function () {
+        return view('main.checkout');
+    })->name('checkout');
 });
 
-
-// Main page
 Route::get('/', function (Request $request) {
+    $query = $request->input(key: 'q');
+
+    Log::info('Route accessed', [
+        'query' => $query,
+        'ajax' => $request->get('ajax'),
+        'has_user' => session()->has('user')
+    ]);
+
+    if ($request->get('ajax')) {
+        try {
+            $productsQuery = Product::query();
+
+            if ($query) {
+                $productsQuery->where(function ($q) use ($query) {
+                    $q->where('productName', 'like', "%{$query}%")
+                        ->orWhere('description', 'like', "%{$query}%")
+                        ->orWhere('seller', 'like', "%{$query}%");
+                });
+            }
+
+            $products = $productsQuery->get();
+
+            $wishlistIds = [];
+            $cartItems = [];
+
+            if (session()->has('user')) {
+                $wishlistIds = Wishlist::where('user_id', session('user')['id'])
+                    ->pluck('product_id')
+                    ->toArray();
+
+                $cartItems = Cart::where('user_id', session('user')['id'])
+                    ->pluck('quantity', 'product_id')
+                    ->toArray();
+            }
+
+            Log::info('AJAX search results', [
+                'query' => $query,
+                'products_count' => $products->count(),
+                'wishlist_count' => count($wishlistIds)
+            ]);
+
+            if ($products->isEmpty()) {
+                return response('<div class="p-4 text-gray-500 text-center">Nenhum produto encontrado para "' . e($query) . '"</div>');
+            }
+
+            return view('main.partials.search_results', compact('products'));
+
+        } catch (Exception $e) {
+            Log::error('Search error: ' . $e->getMessage());
+            return response('<div class="p-4 text-gray-500 text-center">Erro interno na busca</div>', 500);
+        }
+    }
+
+    $productsQuery = Product::query();
+
+    if ($query) {
+        $productsQuery->where(function ($q) use ($query) {
+            $q->where('productName', 'like', "%{$query}%")
+                ->orWhere('description', 'like', "%{$query}%")
+                ->orWhere('seller', 'like', "%{$query}%");
+        });
+    }
+
+    $products = $productsQuery->orderBy('id', 'desc')->get();
 
     if (session()->missing('user')) {
         return view('main.main_page');
     }
-
-    $products = Product::orderBy('id', 'desc')->get();
 
     $wishlistIds = Wishlist::where('user_id', session('user')['id'])
         ->pluck('product_id')
@@ -93,5 +161,5 @@ Route::get('/', function (Request $request) {
         ->selectRaw('SUM(cart.quantity) as total_qty, SUM(cart.quantity * products.price) as total_price')
         ->first();
 
-    return view('main.dashboard', compact('products', 'wishlistIds', 'cartItems', 'cartSummary'));
+    return view('main.dashboard', compact('products', 'wishlistIds', 'cartItems', 'cartSummary', 'query'));
 })->name('index');

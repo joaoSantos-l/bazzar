@@ -11,11 +11,50 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <form action="" method="GET" class="relative w-64 md:w-96">
-                    <input type="text" name="q" placeholder="Buscar produtos..."
-                        class="w-full rounded-full border border-gray-300 pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF5A4B] focus:border-transparent shadow-sm"
-                        value="{{ request('q') }}">
-                    <i class="bi bi-search absolute left-3 top-2.5 text-gray-400"></i>
+                <form x-data="searchComponent()" action="{{ route('index') }}" method="GET"
+                    class="relative w-64 md:w-96 flex items-center">
+                    <div class="relative flex-grow">
+                        <input type="text" x-model="query" name="q" @input.debounce.300ms="performSearch('')"
+                            placeholder="Buscar produtos..."
+                            class="w-full rounded-full border border-gray-300 pl-10 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF5A4B] focus:border-transparent shadow-sm">
+
+                        <i class="bi bi-search absolute left-3 top-2.5 text-gray-400"></i>
+
+                        <div x-show="isLoading" class="absolute right-10 top-2.5">
+                            <i class="bi bi-arrow-repeat animate-spin text-gray-400 text-sm"></i>
+                        </div>
+
+                        <button x-show="query && !isLoading" @click="clearSearch()" type="button"
+                            class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+
+                        <div x-show="isVisible && !isLoading" x-cloak x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 transform scale-95"
+                            x-transition:enter-end="opacity-100 transform scale-100"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 transform scale-100"
+                            x-transition:leave-end="opacity-0 transform scale-95"
+                            class="absolute top-full left-0 right-0 bg-white mt-2 rounded-lg shadow-lg z-50 max-w-100 max-h-96 overflow-y-auto border border-gray-200">
+                            <template x-if="results">
+                                <div x-html="results"></div>
+                            </template>
+
+                            <div x-show="!results && query" class="p-4 text-gray-500 text-center">
+                                Digite para buscar produtos...
+                            </div>
+                        </div>
+                    </div>
+
+                    <button x-show="query && !isLoading" @click="clearSearch()" type="button"
+                        class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+
+                    <button type="submit"
+                        class="ml-2 px-4 py-2 rounded-full bg-[#FF5A4B] text-white font-semibold hover:brightness-110 transition shrink-0">
+                        Buscar
+                    </button>
                 </form>
 
                 <a href="{{ route('product.create') }}"
@@ -23,18 +62,21 @@
                     <i class="bi bi-plus-circle"></i> Adicionar Produto
                 </a>
 
-                <a href="{{ route('cart.show') }}" class="relative">
-                    <i class="bi bi-cart text-2xl"></i>
+                <div x-data="{ totalQty: {{ $cartSummary->total_qty ?? 0 }}, totalPrice: '{{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}' }"
+                    @cart-updated.window="totalQty = $event.detail.total_qty; totalPrice = $event.detail.total_price"
+                    class="flex items-center gap-4">
+                    <a href="{{ route('cart.show') }}" class="relative">
+                        <i class="bi bi-cart text-2xl"></i>
 
-                    <span class="absolute -top-2 -right-3 bg-[#FF5A4B] text-white text-xs px-2 py-1 rounded-full">
-                        {{ $cartSummary->total_qty ?? 0 }}
+                        <span class="absolute -top-2 -right-3 bg-[#FF5A4B] text-white text-xs px-2 py-1 rounded-full"
+                            x-text="totalQty">
+                        </span>
+                    </a>
+
+                    <span class="font-semibold text-gray-700">
+                        R$ <span x-text="totalPrice"></span>
                     </span>
-                </a>
-
-                <span class="font-semibold text-gray-700">
-                    R$ {{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}
-                </span>
-
+                </div>
 
                 <div class="hidden md:flex gap-2">
                     <button id="profileMenuButton"
@@ -78,6 +120,11 @@
         <section class="flex-1 px-6 md:px-10 py-10">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Produtos em Destaque</h2>
+                @if ($query)
+                    <a href="{{ route('index') }}" class="bg-gray-300 text-xl hover:bg-gray-400 p-2 rounded-2xl" title="Limpar pesquisa"> {{ $query }}
+                        <i class="bi bi-x-circle"></i>
+                    </a>
+                @endif
                 <a href=""
                     class="md:hidden inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FF5A4B] text-white font-semibold hover:brightness-110 transition">
                     <i class="bi bi-plus-circle"></i> Adicionar

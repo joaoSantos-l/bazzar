@@ -11,17 +11,21 @@
 
         <div class="flex items-center gap-4">
 
-            <a href="{{ route('cart.show') }}" class="relative">
-                <i class="bi bi-cart text-2xl"></i>
+            <div x-data="{ totalQty: {{ $cartSummary->total_qty ?? 0 }}, totalPrice: '{{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}' }"
+                @cart-updated.window="totalQty = $event.detail.total_qty; totalPrice = $event.detail.total_price"
+                class="flex items-center gap-4">
+                <a href="{{ route('cart.show') }}" class="relative">
+                    <i class="bi bi-cart text-2xl"></i>
 
-                <span class="absolute -top-2 -right-3 bg-[#FF5A4B] text-white text-xs px-2 py-1 rounded-full">
-                    {{ $cartSummary->total_qty ?? 0 }}
+                    <span class="absolute -top-2 -right-3 bg-[#FF5A4B] text-white text-xs px-2 py-1 rounded-full"
+                        x-text="totalQty">
+                    </span>
+                </a>
+
+                <span class="font-semibold text-gray-700">
+                    R$ <span x-text="totalPrice"></span>
                 </span>
-            </a>
-
-            <span class="font-semibold text-gray-700">
-                R$ {{ number_format($cartSummary->total_price ?? 0, 2, ',', '.') }}
-            </span>
+            </div>
 
             <div class="hidden md:flex gap-2">
                 <a href="{{ route('admin.users') }}"
@@ -31,7 +35,7 @@
             </div>
 
             <div class="hidden md:flex gap-2">
-                <a href="{{ route('dashboard') }}"
+                <a href="{{ route('admin.products') }}"
                     class="flex items-center cursor-pointer gap-2 font-semibold md:p-3 rounded-lg md:text-2xl text-gray-700 hover:text-[#FF5A4B] hover:bg-gray-200 transition">
                     <i class="bi bi-bag-fill"></i> Produtos
                 </a>
@@ -162,11 +166,6 @@
                                                 <a href="{{ route('admin.users', $user->id) }}" class="text-[#FF5A4B] p-2"
                                                     title="Ver">
                                                     <i class="bi bi-eye text-lg"></i>
-                                                </a>
-
-                                                <a href="{{ route('index', $user->id) }}" class="text-[#FF5A4B] p-2"
-                                                    title="Editar">
-                                                    <i class="bi bi-pencil text-lg"></i>
                                                 </a>
 
                                                 <form action="{{ route('user.destroy', $user->id) }}" method="POST"

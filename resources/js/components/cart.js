@@ -1,5 +1,3 @@
-// resources/js/components/cart.js
-
 import axios from "axios";
 
 export default function cartComponent(productId, initialQuantity = 0) {
@@ -18,7 +16,7 @@ export default function cartComponent(productId, initialQuantity = 0) {
             if (this.qty > 1) {
                 await this.update(this.qty - 1);
             } else {
-                await this.update(0); // remove
+                await this.update(0);
             }
         },
 
@@ -29,15 +27,19 @@ export default function cartComponent(productId, initialQuantity = 0) {
                     quantity: newQty
                 });
 
-                if (newQty <= 0) {
-                    this.qty = 0;
-                } else {
-                    this.qty = newQty;
-                }
+                this.qty = newQty > 0 ? newQty : 0;
+
+                this.$dispatch('cart-updated', {
+                    total_qty: res.data.cart_summary.total_qty,
+                    total_price: res.data.cart_summary.total_price,
+                    product_total: res.data.product_total,
+                    product_id: productId
+                });
 
             } catch (e) {
                 console.error("Erro ao atualizar carrinho:", e);
             }
         }
+
     }
 }

@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Wishlist;
 use App\Models\Usuario;
-use App\Models\Cart;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
@@ -17,12 +15,11 @@ class ProductController extends Controller
         return redirect()->route('index');
     }
 
-
-    public function create()
+    public function create(Request $request)
     {
+
         $id = session('user.id');
         $user_data = Usuario::findOrFail($id);
-
         return view('main.product.create', compact('user_data'));
     }
 
@@ -31,19 +28,13 @@ class ProductController extends Controller
         $validated = $request->validate([
             'productName' => 'required|string|max:255',
             'seller' => 'required|string|max:30',
-            'description' => 'required|string',
             'stock' => 'required|integer|min:0',
             'price' => 'required|numeric|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        $imagePath = $request->hasFile('image') ? $request->file('image')->store('images', 'public') : null;
 
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
-
-        }
         $data = $validated;
         $data['user_id'] = session('user.id');
         $data['image_path'] = $imagePath;
@@ -51,27 +42,14 @@ class ProductController extends Controller
 
         Product::create($data);
 
-        return redirect()->route('dashboard')->with('success', 'Produto adicionado com sucesso!');
+        return $this->redirectBasedOnRoute($request);
     }
 
     public function edit(Request $request, $id)
     {
-        $previousUrl = $request->header('referer');
-
-        $isProfile = false;
-        $isDashboard = false;
-
-        $profileUrl = URL::route('user.show');
-        $dashboardUrl = URL::route('dashboard');
-
-        if ($previousUrl && str_contains($previousUrl, $profileUrl)) {
-            $isProfile = true;
-        } else if ($previousUrl && str_contains($previousUrl, $dashboardUrl)) {
-            $isDashboard = true;
-        }
 
         $product = Product::findOrFail($id);
-        return view('main.product.edit', compact('product', 'isProfile', 'isDashboard'));
+        return view('main.product.edit', compact('product'));
     }
 
     public function update(Request $request, $id)
@@ -79,29 +57,17 @@ class ProductController extends Controller
         $validated = $request->validate([
             'productName' => 'required|string|max:255',
             'seller' => 'required|string|max:30',
-            'description' => 'required|string',
             'stock' => 'required|integer|min:0',
             'price' => 'required|numeric|min:0',
-            'isProfile' => 'nullable|boolean',
-            'isDashboard' => 'nullable|boolean',
         ]);
-
-        $isProfile = $request->input('isProfile', false);
-        $isDashboard = $request->input('isDashboard', false);
 
         $product = Product::findOrFail($id);
         $product->update($validated);
 
-        if ($isProfile) {
-            return redirect()->route('user.show')->with('success', 'Produto atualizado com sucesso!');
-        } else if ($isDashboard) {
-            return redirect()->route('dashboard')->with('success', 'Produto atualizado com sucesso!');
-        }
-
-        return redirect()->route('dashboard')->with('success', 'Produto atualizado com sucesso!');
+        return $this->redirectBasedOnRoute($request);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $product = Product::findOrFail($id);
 
@@ -111,6 +77,25 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Produto excluído com sucesso!');
+        return $this->redirectBasedOnRoute($request);
+    }
+
+    private function redirectBasedOnRoute(Request $request, $message = 'Produto processado com sucesso!')
+    {
+        if ($request->has('return_to_url') && filter_var($request->input('return_to_url'), FILTER_VALIDATE_URL)) {
+            $returnTo = $request->input('return_to_url');
+        } else {
+            $previous = $request->header('referer');
+
+            if (str_contains($previous, URL::route('user.show'))) {
+                $returnTo = URL::route('user.show');
+            } elseif (str_contains($previous, URL::route('admin.products'))) {
+                $returnTo = URL::route('admin.products');
+            } else {
+                $returnTo = URL::route('dashboard');
+            }
+        }
+
+        return redirect($returnTo)->with('success', $message);
     }
 }

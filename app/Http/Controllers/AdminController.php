@@ -2,17 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\Product;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
-use Session;
-
 class AdminController extends Controller
 {
-    function show()
+    function showUsers()
     {
         $users = Usuario::all();
+        $cartSummary = Cart::where('cart.user_id', session('user')['id'])
+            ->join('products', 'cart.product_id', '=', 'products.id')
+            ->selectRaw('SUM(cart.quantity) as total_qty, SUM(cart.quantity * products.price) as total_price')
+            ->first();
 
-        return view("main.user.admin.users_list", compact("users"));
+
+        return view("main.user.admin.users_list", compact("users", "cartSummary"));
+    }
+
+    function showProducts(Request $request)
+    {
+        $query = $request->input(key: 'q');
+        $productsQuery = Product::query();
+
+        if ($query) {
+            $productsQuery->where(function ($q) use ($query) {
+                $q->where('productName', 'like', "%{$query}%")
+                    ->orWhere('description', 'like', "%{$query}%")
+                    ->orWhere('seller', 'like', "%{$query}%");
+            });
+        }
+
+        $products = $productsQuery->orderBy('id', 'desc')->get();
+
+        $cartSummary = Cart::where('cart.user_id', session('user')['id'])
+            ->join('products', 'cart.product_id', '=', 'products.id')
+            ->selectRaw('SUM(cart.quantity) as total_qty, SUM(cart.quantity * products.price) as total_price')
+            ->first();
+
+
+        return view("main.user.admin.products_list", compact("products", "cartSummary", "query"));
     }
 
     function sudo($id)

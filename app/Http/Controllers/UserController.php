@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Usuario;
 use App\Models\Wishlist;
@@ -23,7 +24,12 @@ class UserController extends Controller
             ->pluck('product_id')
             ->toArray();
 
-        return view('main.user.profile', compact('user_data', 'user_products', 'wishlist', 'wishlistIds'));
+        $cartSummary = Cart::where('cart.user_id', session('user')['id'])
+            ->join('products', 'cart.product_id', '=', 'products.id')
+            ->selectRaw('SUM(cart.quantity) as total_qty, SUM(cart.quantity * products.price) as total_price')
+            ->first();
+
+        return view('main.user.profile', compact('user_data', 'user_products', 'wishlist', 'wishlistIds', 'cartSummary'));
     }
 
     public function update(Request $request)
